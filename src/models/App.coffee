@@ -6,3 +6,15 @@ class window.App extends Backbone.Model
     @set 'playerHand', deck.dealPlayer()
     @set 'dealerHand', deck.dealDealer()
 
+    @get('playerHand').on 'bust' , => @trigger 'dealerWin'
+    @get('playerHand').on 'stand', => @get('dealerHand').playToWin()
+    @get('dealerHand').on 'bust' , => @trigger 'playerWin'
+    @get('dealerHand').on 'stand', => @trigger @decideWinner()
+
+  decideWinner: ->
+    if @get('playerHand').maxScore() > @get('dealerHand').maxScore()
+      'playerWin'
+    else if @get('playerHand').maxScore() < @get('dealerHand').maxScore()
+      'dealerWin'
+    else
+      'push'
